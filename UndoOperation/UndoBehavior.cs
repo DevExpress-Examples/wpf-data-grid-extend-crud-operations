@@ -12,13 +12,9 @@ using System.Windows.Input;
 namespace UndoOperation {
     public class UndoBehavior : Behavior<TableView> {
         public static readonly DependencyProperty CopyOperationsSupporterProperty;
-        public static readonly DependencyProperty ValidateRowCommandProperty;
-        public static readonly DependencyProperty ValidateRowDeletionCommandProperty;
 
         static UndoBehavior() {
             CopyOperationsSupporterProperty = DependencyProperty.Register(nameof(CopyOperationsSupporter), typeof(IDataItemCopyOperationsSupporter), typeof(UndoBehavior), new PropertyMetadata(null));
-            ValidateRowCommandProperty = DependencyProperty.Register(nameof(ValidateRowCommand), typeof(ICommand<RowValidationArgs>), typeof(UndoBehavior), new PropertyMetadata(null));
-            ValidateRowDeletionCommandProperty = DependencyProperty.Register(nameof(ValidateRowDeletionCommand), typeof(ICommand<ValidateRowDeletionArgs>), typeof(UndoBehavior), new PropertyMetadata(null));
         }
 
         IList Source { get { return (IList)AssociatedObject.DataControl.ItemsSource; } }
@@ -30,14 +26,6 @@ namespace UndoOperation {
         public IDataItemCopyOperationsSupporter CopyOperationsSupporter {
             get { return (IDataItemCopyOperationsSupporter)GetValue(CopyOperationsSupporterProperty); }
             set { SetValue(CopyOperationsSupporterProperty, value); }
-        }
-        public ICommand<RowValidationArgs> ValidateRowCommand {
-            get { return (ICommand<RowValidationArgs>)GetValue(ValidateRowCommandProperty); }
-            set { SetValue(ValidateRowCommandProperty, value); }
-        }
-        public ICommand<ValidateRowDeletionArgs> ValidateRowDeletionCommand {
-            get { return (ICommand<ValidateRowDeletionArgs>)GetValue(ValidateRowDeletionCommandProperty); }
-            set { SetValue(ValidateRowDeletionCommandProperty, value); }
         }
         public ICommand UndoCommand { get; private set; }
 
@@ -118,17 +106,17 @@ namespace UndoOperation {
             CopyOperationsSupporter.CopyTo(editingCache, item);
             editingCache = null;
             AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item));
-            ValidateRowCommand.Execute(new RowValidationArgs(editingCache, Source.IndexOf(item), false, new CancellationToken(), false));
+            AssociatedObject.ValidateRowCommand?.Execute(new RowValidationArgs(editingCache, Source.IndexOf(item), false, new CancellationToken(), false));
         }
 
         void RemoveItem(object item) {
             Source.Remove(item);
-            ValidateRowDeletionCommand.Execute(new ValidateRowDeletionArgs(new object[] { item }, new int[] { Source.IndexOf(item) }));
+            AssociatedObject.ValidateRowDeletionCommand?.Execute(new ValidateRowDeletionArgs(new object[] { item }, new int[] { Source.IndexOf(item) }));
         }
 
         void InsertItem(int position, object item) {
             Source.Insert(position, item);
-            ValidateRowCommand.Execute(new RowValidationArgs(item, Source.IndexOf(item), true, new CancellationToken(), false));
+            AssociatedObject.ValidateRowCommand?.Execute(new RowValidationArgs(item, Source.IndexOf(item), true, new CancellationToken(), false));
         }
     }
 }
