@@ -5,7 +5,7 @@ namespace UndoOperation {
     public class UserCopyOperationsSupporter : IDataItemCopyOperationsSupporter {
         public object Clone(object item) {
             var userItem = GetUser(item);
-            return new User() { FirstName = userItem.FirstName, Id = userItem.Id, Issues = userItem.Issues, LastName = userItem.LastName };
+            return new User() { FirstName = userItem.FirstName, Id = userItem.Id, LastName = userItem.LastName };
         }
 
         public void CopyTo(object source, object target) {
@@ -13,7 +13,6 @@ namespace UndoOperation {
             var userTarget = GetUser(target);
             userTarget.FirstName = userSource.FirstName;
             userTarget.Id = userSource.Id;
-            userTarget.Issues = userSource.Issues;
             userTarget.LastName = userSource.LastName;
         }
 

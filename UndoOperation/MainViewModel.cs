@@ -18,15 +18,7 @@ namespace UndoOperation {
             }
         }
 
-        UserCopyOperationsSupporter _CopyOperationsSupporter;
-        public UserCopyOperationsSupporter CopyOperationsSupporter {
-            get {
-                if(_CopyOperationsSupporter == null) {
-                    _CopyOperationsSupporter = new UserCopyOperationsSupporter();
-                }
-                return _CopyOperationsSupporter;
-            }
-        }
+        public UserCopyOperationsSupporter CopyOperationsSupporter { get; private set; } = new UserCopyOperationsSupporter();
 
         [DevExpress.Mvvm.DataAnnotations.Command]
         public void ValidateRow(DevExpress.Mvvm.Xpf.RowValidationArgs args) {

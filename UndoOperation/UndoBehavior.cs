@@ -21,7 +21,8 @@ namespace UndoOperation {
             ValidateRowDeletionCommandProperty = DependencyProperty.Register(nameof(ValidateRowDeletionCommand), typeof(ICommand<ValidateRowDeletionArgs>), typeof(UndoBehavior), new PropertyMetadata(null));
         }
 
-        IList source;
+        IList Source { get { return (IList)AssociatedObject.DataControl.ItemsSource; } }
+
         Action undoAction;
         bool isNewItemRowEditing;
         object editingCache;
@@ -51,8 +52,6 @@ namespace UndoOperation {
             AssociatedObject.RowEditStarted += OnEditingStarted;
             AssociatedObject.DataSourceRefresh += OnRefresh;
             AssociatedObject.InitNewRow += OnNewRowStarted;
-            source = (IList)AssociatedObject.DataControl.ItemsSource;
-            AssociatedObject.DataControl.ItemsSourceChanged += ItemsSourceChanged;
         }
 
         protected override void OnDetaching() {
@@ -61,13 +60,7 @@ namespace UndoOperation {
             AssociatedObject.RowEditStarted -= OnEditingStarted;
             AssociatedObject.DataSourceRefresh -= OnRefresh;
             AssociatedObject.InitNewRow -= OnNewRowStarted;
-            source = null;
-            AssociatedObject.DataControl.ItemsSourceChanged -= ItemsSourceChanged;
             base.OnDetaching();
-        }
-
-        void ItemsSourceChanged(object sender, ItemsSourceChangedEventArgs e) {
-            source = (IList)AssociatedObject.DataControl.ItemsSource;
         }
 
         void OnRefresh(object sender, DataSourceRefreshEventArgs e) {
@@ -125,17 +118,17 @@ namespace UndoOperation {
             CopyOperationsSupporter.CopyTo(editingCache, item);
             editingCache = null;
             AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item));
-            ValidateRowCommand.Execute(new RowValidationArgs(editingCache, source.IndexOf(item), false, new CancellationToken(), false));
+            ValidateRowCommand.Execute(new RowValidationArgs(editingCache, Source.IndexOf(item), false, new CancellationToken(), false));
         }
 
         void RemoveItem(object item) {
-            source.Remove(item);
-            ValidateRowDeletionCommand.Execute(new ValidateRowDeletionArgs(new object[] { item }, new int[] { source.IndexOf(item) }));
+            Source.Remove(item);
+            ValidateRowDeletionCommand.Execute(new ValidateRowDeletionArgs(new object[] { item }, new int[] { Source.IndexOf(item) }));
         }
 
         void InsertItem(int position, object item) {
-            source.Insert(position, item);
-            ValidateRowCommand.Execute(new RowValidationArgs(item, source.IndexOf(item), true, new CancellationToken(), false));
+            Source.Insert(position, item);
+            ValidateRowCommand.Execute(new RowValidationArgs(item, Source.IndexOf(item), true, new CancellationToken(), false));
         }
     }
 }

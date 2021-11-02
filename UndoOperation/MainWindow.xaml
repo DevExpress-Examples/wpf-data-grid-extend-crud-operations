@@ -22,7 +22,6 @@
             <dxg:GridControl.View>
                 <dxg:TableView NewItemRowPosition="Top"
                                ShowUpdateRowButtons="OnCellEditorOpen"
-                               RowEditStartedCommand="{Binding StartRowEditCommand}"
                                ValidateRowCommand="{Binding ValidateRowCommand}"
                                ValidateRowDeletionCommand="{Binding ValidateRowDeletionCommand}"
                                DataSourceRefreshCommand="{Binding DataSourceRefreshCommand}"
