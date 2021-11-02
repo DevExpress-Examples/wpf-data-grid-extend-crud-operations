@@ -10,11 +10,11 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace UndoOperation {
-    public class UndoBehavior : Behavior<TableView> {
+    public class UndoCRUDOperationsBehavior : Behavior<TableView> {
         public static readonly DependencyProperty CopyOperationsSupporterProperty;
 
-        static UndoBehavior() {
-            CopyOperationsSupporterProperty = DependencyProperty.Register(nameof(CopyOperationsSupporter), typeof(IDataItemCopyOperationsSupporter), typeof(UndoBehavior), new PropertyMetadata(null));
+        static UndoCRUDOperationsBehavior() {
+            CopyOperationsSupporterProperty = DependencyProperty.Register(nameof(CopyOperationsSupporter), typeof(ICopyOperationSupporter), typeof(UndoCRUDOperationsBehavior), new PropertyMetadata(null));
         }
 
         IList Source { get { return (IList)AssociatedObject.DataControl.ItemsSource; } }
@@ -23,13 +23,13 @@ namespace UndoOperation {
         bool isNewItemRowEditing;
         object editingCache;
 
-        public IDataItemCopyOperationsSupporter CopyOperationsSupporter {
-            get { return (IDataItemCopyOperationsSupporter)GetValue(CopyOperationsSupporterProperty); }
+        public ICopyOperationSupporter CopyOperationsSupporter {
+            get { return (ICopyOperationSupporter)GetValue(CopyOperationsSupporterProperty); }
             set { SetValue(CopyOperationsSupporterProperty, value); }
         }
         public ICommand UndoCommand { get; private set; }
 
-        public UndoBehavior() {
+        public UndoCRUDOperationsBehavior() {
             UndoCommand = new DelegateCommand(Undo, CanUndo);
         }
 

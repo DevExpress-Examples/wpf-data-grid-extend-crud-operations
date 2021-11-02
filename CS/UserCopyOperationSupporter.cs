@@ -2,7 +2,7 @@
 using System;
 
 namespace UndoOperation {
-    public class UserCopyOperationsSupporter : IDataItemCopyOperationsSupporter {
+    public class UserCopyOperationSupporter : ICopyOperationSupporter {
         public object Clone(object item) {
             var userItem = GetUser(item);
             return new User() { FirstName = userItem.FirstName, Id = userItem.Id, LastName = userItem.LastName };

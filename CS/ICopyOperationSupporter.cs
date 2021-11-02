@@ -1,5 +1,5 @@
 ﻿namespace UndoOperation {
-    public interface IDataItemCopyOperationsSupporter {
+    public interface ICopyOperationSupporter {
         object Clone(object item);
         void CopyTo(object source, object target);
     }

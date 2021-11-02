@@ -27,7 +27,7 @@
                                DataSourceRefreshCommand="{Binding DataSourceRefreshCommand}"
                                ShowFixedTotalSummary="True">
                     <dxmvvm:Interaction.Behaviors>
-                        <local:UndoBehavior x:Name="undoBehavior" CopyOperationsSupporter="{Binding CopyOperationsSupporter}" />
+                        <local:UndoCRUDOperationsBehavior x:Name="undoBehavior" CopyOperationsSupporter="{Binding CopyOperationsSupporter}" />
                     </dxmvvm:Interaction.Behaviors>
                 </dxg:TableView>
             </dxg:GridControl.View>

@@ -18,7 +18,7 @@ namespace UndoOperation {
             }
         }
 
-        public UserCopyOperationsSupporter CopyOperationsSupporter { get; private set; }
+        public UserCopyOperationSupporter CopyOperationsSupporter { get; private set; }
 
         [DevExpress.Mvvm.DataAnnotations.Command]
         public void ValidateRow(DevExpress.Mvvm.Xpf.RowValidationArgs args) {
@@ -41,7 +41,7 @@ namespace UndoOperation {
         }
 
         public MainViewModel() {
-            CopyOperationsSupporter = new UserCopyOperationsSupporter();
+            CopyOperationsSupporter = new UserCopyOperationSupporter();
         }
     }
 }
