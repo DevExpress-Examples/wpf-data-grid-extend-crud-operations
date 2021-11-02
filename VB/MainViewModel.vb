@@ -1,0 +1,58 @@
+Imports DevExpress.Mvvm
+Imports EntityFrameworkIssues.Issues
+Imports System.Collections.ObjectModel
+
+Namespace UndoOperation
+
+    Public Class MainViewModel
+        Inherits ViewModelBase
+
+        Private _CopyOperationsSupporter As UserCopyOperationsSupporter
+
+        Private _Context As IssuesContext
+
+        Private _ItemsSource As ObservableCollection(Of User)
+
+        Public ReadOnly Property ItemsSource As ObservableCollection(Of User)
+            Get
+                If _ItemsSource Is Nothing AndAlso Not IsInDesignMode Then
+                    _Context = New IssuesContext()
+                    _ItemsSource = New ObservableCollection(Of User)(_Context.Users)
+                End If
+
+                Return _ItemsSource
+            End Get
+        End Property
+
+        Public Property CopyOperationsSupporter As UserCopyOperationsSupporter = New UserCopyOperationsSupporter()
+            Get
+                Return _CopyOperationsSupporter
+            End Get
+
+            Private Set(ByVal value As UserCopyOperationsSupporter)
+                _CopyOperationsSupporter = value
+            End Set
+        End Property
+
+        <DevExpress.Mvvm.DataAnnotations.Command>
+        Public Sub ValidateRow(ByVal args As DevExpress.Mvvm.Xpf.RowValidationArgs)
+            Dim item = CType(args.Item, User)
+            If args.IsNewItem Then _Context.Users.Add(item)
+            _Context.SaveChanges()
+        End Sub
+
+        <DevExpress.Mvvm.DataAnnotations.Command>
+        Public Sub ValidateRowDeletion(ByVal args As DevExpress.Mvvm.Xpf.ValidateRowDeletionArgs)
+            Dim item = CType(args.Items.[Single](), User)
+            _Context.Users.Remove(item)
+            _Context.SaveChanges()
+        End Sub
+
+        <DevExpress.Mvvm.DataAnnotations.Command>
+        Public Sub DataSourceRefresh(ByVal args As DevExpress.Mvvm.Xpf.DataSourceRefreshArgs)
+            _ItemsSource = Nothing
+            _Context = Nothing
+            RaisePropertyChanged(NameOf(MainViewModel.ItemsSource))
+        End Sub
+    End Class
+End Namespace
