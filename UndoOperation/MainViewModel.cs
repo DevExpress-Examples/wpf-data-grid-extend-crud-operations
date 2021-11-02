@@ -1,18 +1,14 @@
 ﻿using DevExpress.Mvvm;
 using EntityFrameworkIssues.Issues;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UndoOperation {
     public class MainViewModel : ViewModelBase {
         EntityFrameworkIssues.Issues.IssuesContext _Context;
         ObservableCollection<User> _ItemsSource;
 
-        public ObservableCollection<EntityFrameworkIssues.Issues.User> ItemsSource {
+        public ObservableCollection<User> ItemsSource {
             get {
                 if(_ItemsSource == null && !IsInDesignMode) {
                     _Context = new EntityFrameworkIssues.Issues.IssuesContext();

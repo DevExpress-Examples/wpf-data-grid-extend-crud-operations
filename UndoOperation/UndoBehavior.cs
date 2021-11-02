@@ -51,9 +51,14 @@ namespace UndoOperation {
             AssociatedObject.DataSourceRefresh += OnRefresh;
             AssociatedObject.InitNewRow += OnNewRowStarted;
             source = (IList)AssociatedObject.DataControl.ItemsSource;
+            AssociatedObject.DataControl.ItemsSourceChanged += ItemsSourceChanged;
         }
 
-        private void OnRefresh(object sender, DataSourceRefreshEventArgs e) {
+        void ItemsSourceChanged(object sender, ItemsSourceChangedEventArgs e) {
+            source = (IList)AssociatedObject.DataControl.ItemsSource;
+        }
+
+        void OnRefresh(object sender, DataSourceRefreshEventArgs e) {
             undoAction = null;
             editingCache = null;
         }
@@ -65,10 +70,11 @@ namespace UndoOperation {
             AssociatedObject.DataSourceRefresh -= OnRefresh;
             AssociatedObject.InitNewRow -= OnNewRowStarted;
             source = null;
+            AssociatedObject.DataControl.ItemsSourceChanged -= ItemsSourceChanged;
             base.OnDetaching();
         }
 
-        private void OnNewRowStarted(object sender, InitNewRowEventArgs e) {
+        void OnNewRowStarted(object sender, InitNewRowEventArgs e) {
             isNewItemRowEditing = true;
         }
 
@@ -76,27 +82,41 @@ namespace UndoOperation {
 
         object editingCache;
 
-        private void OnEditingStarted(object sender, RowEditStartedEventArgs e) {
+        void OnEditingStarted(object sender, RowEditStartedEventArgs e) {
             if(e.RowHandle != DataControlBase.NewItemRowHandle) {
                 editingCache = CopyOperationsSupporter.Clone(e.Row);
             }
         }
 
-        private void OnRowDeleted(object sender, GridValidateRowDeletionEventArgs e) {
-            undoAction = new Action(() => {
-                InsertItem(e.RowHandles.Single(), CopyOperationsSupporter.Clone(e.Rows.Single())); //Somehow index is changing after a new adding to source
-            });
+        void OnRowDeleted(object sender, GridValidateRowDeletionEventArgs e) {
+            undoAction = new Action(() => UndoDeleteAction(e.RowHandles.Single(), CopyOperationsSupporter.Clone(e.Rows.Single())));
         }
 
-        private void OnRowAddedOrEdited(object sender, GridRowValidationEventArgs e) {
+        void UndoEditAction(object item) {
+            ApplyEditingCache(item);
+            AssociatedObject.DataControl.CurrentItem = item;
+        }
+
+        void UndoAddAction(object item) {
+            AssociatedObject.DataControl.CurrentItem = item;
+            RemoveItem(item);
+        }
+
+        void UndoDeleteAction(int position, object item) {
+            InsertItem(position, item);
+            AssociatedObject.DataControl.CurrentItem = item;
+        }
+
+        void OnRowAddedOrEdited(object sender, GridRowValidationEventArgs e) {
             var item = e.Row;
-            undoAction = e.IsNewItem ? new Action(() => RemoveItem(item)) : new Action(() => ApplyEditingCache(item));
+            var isNewItem = e.IsNewItem;
+            undoAction = e.IsNewItem ? new Action(() => UndoAddAction(item)) : new Action(() => UndoEditAction(item));
             isNewItemRowEditing = false;
         }
 
         void ApplyEditingCache(object item) {
             CopyOperationsSupporter.CopyTo(editingCache, item);
-            AssociatedObject.DataControl.RefreshRow(source.IndexOf(item)); //TODO: find a way how to get row handle by element or list index
+            AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item));
             ValidateRowCommand.Execute(new RowValidationArgs(editingCache, source.IndexOf(item), false, new CancellationToken(), false));
         }
 
