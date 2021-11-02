@@ -1,6 +1,7 @@
 Imports DevExpress.Mvvm
 Imports EntityFrameworkIssues.Issues
 Imports System.Collections.ObjectModel
+Imports System.Linq
 
 Namespace UndoOperation
 
@@ -43,7 +44,7 @@ Namespace UndoOperation
 
         <DevExpress.Mvvm.DataAnnotations.Command>
         Public Sub ValidateRowDeletion(ByVal args As DevExpress.Mvvm.Xpf.ValidateRowDeletionArgs)
-            Dim item = CType(args.Items.[Single](), User)
+            Dim item = CType(args.Items.Single(), User)
             _Context.Users.Remove(item)
             _Context.SaveChanges()
         End Sub

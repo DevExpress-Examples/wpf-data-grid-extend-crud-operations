@@ -7,6 +7,7 @@ Imports System.Collections
 Imports System.Threading
 Imports System.Windows
 Imports System.Windows.Input
+Imports System.Linq
 
 Namespace UndoOperation
 
@@ -59,19 +60,19 @@ Namespace UndoOperation
 
         Protected Overrides Sub OnAttached()
             MyBase.OnAttached()
-            AssociatedObject.ValidateRow += AddressOf OnRowAddedOrEdited
-            AssociatedObject.ValidateRowDeletion += AddressOf OnRowDeleted
-            AssociatedObject.RowEditStarted += AddressOf OnEditingStarted
-            AssociatedObject.DataSourceRefresh += AddressOf OnRefresh
-            AssociatedObject.InitNewRow += AddressOf OnNewRowStarted
+            AddHandler AssociatedObject.ValidateRow, AddressOf OnRowAddedOrEdited
+            AddHandler AssociatedObject.ValidateRowDeletion, AddressOf OnRowDeleted
+            AddHandler AssociatedObject.RowEditStarted, AddressOf OnEditingStarted
+            AddHandler AssociatedObject.DataSourceRefresh, AddressOf OnRefresh
+            AddHandler AssociatedObject.InitNewRow, AddressOf OnNewRowStarted
         End Sub
 
         Protected Overrides Sub OnDetaching()
-            AssociatedObject.ValidateRow -= AddressOf OnRowAddedOrEdited
-            AssociatedObject.ValidateRowDeletion -= AddressOf OnRowDeleted
-            AssociatedObject.RowEditStarted -= AddressOf OnEditingStarted
-            AssociatedObject.DataSourceRefresh -= AddressOf OnRefresh
-            AssociatedObject.InitNewRow -= AddressOf OnNewRowStarted
+            RemoveHandler AssociatedObject.ValidateRow, AddressOf OnRowAddedOrEdited
+            RemoveHandler AssociatedObject.ValidateRowDeletion, AddressOf OnRowDeleted
+            RemoveHandler AssociatedObject.RowEditStarted, AddressOf OnEditingStarted
+            RemoveHandler AssociatedObject.DataSourceRefresh, AddressOf OnRefresh
+            RemoveHandler AssociatedObject.InitNewRow, AddressOf OnNewRowStarted
             MyBase.OnDetaching()
         End Sub
 
@@ -113,13 +114,13 @@ Namespace UndoOperation
         End Sub
 
         Private Sub OnEditingStarted(ByVal sender As Object, ByVal e As RowEditStartedEventArgs)
-            If e.RowHandle IsNot DataControlBase.NewItemRowHandle Then
+            If Not Integer.Equals(e.RowHandle, DataControlBase.NewItemRowHandle) Then
                 editingCache = CopyOperationsSupporter.Clone(e.Row)
             End If
         End Sub
 
         Private Sub OnRowDeleted(ByVal sender As Object, ByVal e As GridValidateRowDeletionEventArgs)
-            undoAction = New Action(Sub() UndoDeleteAction(e.RowHandles.[Single](), CopyOperationsSupporter.Clone(e.Rows.[Single]())))
+            undoAction = New Action(Sub() UndoDeleteAction(e.RowHandles.Single(), CopyOperationsSupporter.Clone(e.Rows.Single())))
         End Sub
 
         Private Sub OnRowAddedOrEdited(ByVal sender As Object, ByVal e As GridRowValidationEventArgs)
