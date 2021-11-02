@@ -71,6 +71,10 @@ namespace UndoOperation {
         }
 
         void OnRefresh(object sender, DataSourceRefreshEventArgs e) {
+            Clear();
+        }
+
+        void Clear() {
             undoAction = null;
             editingCache = null;
         }
@@ -119,6 +123,7 @@ namespace UndoOperation {
 
         void ApplyEditingCache(object item) {
             CopyOperationsSupporter.CopyTo(editingCache, item);
+            editingCache = null;
             AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item));
             ValidateRowCommand.Execute(new RowValidationArgs(editingCache, source.IndexOf(item), false, new CancellationToken(), false));
         }
