@@ -25,17 +25,13 @@ namespace AsyncPosting {
         public void ValidateRow(RowValidationArgs args) {
             var item = (User)args.Item;
             args.ResultAsync = Task.Run(async () => {
-                try {
-                    await Task.Delay(3000);
-                    if(args.IsNewItem) {
-                        _Context.Users.Add(item);
-                    } else {
-                        _Context.SaveChanges();
-                    }
-                    return null;
-                } catch(Exception ex) {
-                    return new ValidationErrorInfo("An error occured while");
+                await Task.Delay(3000);
+                if(args.IsNewItem) {
+                    _Context.Users.Add(item);
+                } else {
+                    _Context.SaveChanges();
                 }
+                return new ValidationErrorInfo(null);
             });
         }
         [Command]
