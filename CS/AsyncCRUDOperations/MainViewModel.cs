@@ -11,15 +11,8 @@ namespace AsyncCRUDOperations {
         IssuesContext _Context;
         IList<User> _ItemsSource;
 
-        public IList<User> ItemsSource {
-            get {
-                if(_ItemsSource == null && !IsInDesignMode) {
-                    _Context = new IssuesContext();
-                    _ItemsSource = _Context.Users.ToList();
-                }
-                return _ItemsSource;
-            }
-        }
+        public IList<User> ItemsSource { get { return _ItemsSource; } }
+
         [Command]
         public void ValidateRow(RowValidationArgs args) {
             var item = (User)args.Item;
@@ -30,7 +23,7 @@ namespace AsyncCRUDOperations {
                 } else {
                     _Context.SaveChanges();
                 }
-                return new ValidationErrorInfo("fsdfdsf");
+                return new ValidationErrorInfo(null);
             });
         }
         [Command]
