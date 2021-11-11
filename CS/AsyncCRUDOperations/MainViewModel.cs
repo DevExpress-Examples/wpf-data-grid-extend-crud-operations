@@ -28,7 +28,6 @@ namespace AsyncCRUDOperations {
         }
         [Command]
         public void ValidateRowDeletion(ValidateRowDeletionArgs args) {
-            Task.Delay(3000).Wait();
             var item = (User)args.Items.Single();
             _Context.Users.Remove(item);
             _Context.SaveChanges();
@@ -39,7 +38,7 @@ namespace AsyncCRUDOperations {
         }
 
         async Task RefreshDataSoruceAsync() {
-            await Task.Delay(3000);
+            await Task.Delay(3000).ConfigureAwait(false);
             _Context = new IssuesContext();
             _ItemsSource = _Context.Users.ToList();
             RaisePropertyChanged(nameof(ItemsSource));
