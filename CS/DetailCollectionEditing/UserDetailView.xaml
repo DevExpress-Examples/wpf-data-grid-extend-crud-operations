@@ -18,13 +18,13 @@
             <dxlc:DataLayoutItem Binding="{Binding Item.LastName}"/>
             <dxlc:LayoutGroup Header="Issues" GroupBoxDisplayMode="Light" View="GroupBox" Orientation="Vertical">
                 <dxb:ToolBarControl>
-                    <dxb:BarButtonItem Content="Edit (F2)" Command="{Binding UpdateCommand, ElementName=EditFormBehavior}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Edit.svg}" BarItemDisplayMode="ContentAndGlyph" />
-                    <dxb:BarButtonItem Content="New" Command="{Binding CreateCommand, ElementName=EditFormBehavior}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" BarItemDisplayMode="ContentAndGlyph" />
+                    <dxb:BarButtonItem Content="Edit (F2)" Command="{Binding View.Commands.EditFocusedRow, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Edit.svg}" BarItemDisplayMode="ContentAndGlyph" />
+                    <dxb:BarButtonItem Content="New" Command="{Binding View.Commands.AddNewRow, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" BarItemDisplayMode="ContentAndGlyph" />
                     <dxb:BarButtonItem Content="Delete (Del)" Command="{Binding View.Commands.DeleteFocusedRow, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Delete.svg}" BarItemDisplayMode="ContentAndGlyph" />
                 </dxb:ToolBarControl>
                 <dxg:GridControl x:Name="grid" ItemsSource="{Binding Issues}" Grid.Row="1">
                     <dxg:GridControl.View>
-                        <dxg:TableView ShowFixedTotalSummary="True" NavigationStyle="Row" RowDoubleClickCommand="{Binding RowDoubleClickCommand, ElementName=EditFormBehavior}" ValidateRowDeletionCommand="{Binding ValidateRowDeletionCommand}"/>
+                        <dxg:TableView NewItemRowPosition="Top" ShowUpdateRowButtons="OnCellEditorOpen" ShowFixedTotalSummary="True" ValidateRowCommand="{Binding ValidateRowCommand}" ValidateRowDeletionCommand="{Binding ValidateRowDeletionCommand}"/>
                     </dxg:GridControl.View>
                     <dxg:GridColumn FieldName="Subject" IsSmart="True" />
                     <dxg:GridColumn FieldName="Created" IsSmart="True" SortOrder="Descending"/>
@@ -33,19 +33,8 @@
                     <dxg:GridControl.TotalSummary>
                         <dxg:GridSummaryItem SummaryType="Count" Alignment="Right" />
                     </dxg:GridControl.TotalSummary>
-                    <dxmvvm:Interaction.Behaviors>
-                        <dxg:DialogEditFormBehavior x:Name="EditFormBehavior" KeyProperty="Id" CreateEditItemViewModelCommand="{Binding CreateEditEntityViewModelCommand}" ValidateRowCommand="{Binding ValidateRowCommand}" ValidateRowDeletionCommand="{Binding ValidateRowDeletionCommand}">
-                            <dxg:DialogEditFormBehavior.EditTemplate>
-                                <DataTemplate>
-                                    <local:IssueDetailView />
-                                </DataTemplate>
-                            </dxg:DialogEditFormBehavior.EditTemplate>
-                        </dxg:DialogEditFormBehavior>
-                    </dxmvvm:Interaction.Behaviors>
                     <dxg:GridControl.InputBindings>
                         <KeyBinding Command="{Binding View.Commands.DeleteFocusedRow, ElementName=grid}" Key="Delete" />
-                        <KeyBinding Command="{Binding UpdateCommand, ElementName=EditFormBehavior}" Key="F2" />
-                        <KeyBinding Command="{Binding CreateCommand, ElementName=EditFormBehavior}" Key="N" Modifiers="Control" />
                     </dxg:GridControl.InputBindings>
                 </dxg:GridControl>
             </dxlc:LayoutGroup>
