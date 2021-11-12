@@ -1,0 +1,53 @@
+<Window x:Class="DetailCollectionEditing.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DetailCollectionEditing"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <dxb:ToolBarControl>
+            <dxb:BarButtonItem Content="Refresh (F5)" Command="{Binding View.Commands.RefreshDataSource, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}" BarItemDisplayMode="ContentAndGlyph" />
+            <dxb:BarButtonItem Content="Edit (F2)" Command="{Binding UpdateCommand, ElementName=EditFormBehavior}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Edit.svg}" BarItemDisplayMode="ContentAndGlyph" />
+            <dxb:BarButtonItem Content="New" Command="{Binding CreateCommand, ElementName=EditFormBehavior}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" BarItemDisplayMode="ContentAndGlyph" />
+            <dxb:BarButtonItem Content="Delete (Del)" Command="{Binding View.Commands.DeleteFocusedRow, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Delete.svg}" BarItemDisplayMode="ContentAndGlyph" />
+        </dxb:ToolBarControl>
+        <dxg:GridControl x:Name="grid" ItemsSource="{Binding ItemsSource}" RestoreStateKeyFieldName="Id" RestoreStateOnSourceChange="True" Grid.Row="1">
+            <dxg:GridControl.View>
+                <dxg:TableView RowDoubleClickCommand="{Binding RowDoubleClickCommand, ElementName=EditFormBehavior}" NavigationStyle="Row" ValidateRowDeletionCommand="{Binding ValidateRowDeletionCommand}" DataSourceRefreshCommand="{Binding DataSourceRefreshCommand}" ShowFixedTotalSummary="True" />
+            </dxg:GridControl.View>
+            <dxg:GridColumn FieldName="Id" IsSmart="True" ReadOnly="True" />
+            <dxg:GridColumn FieldName="FirstName" IsSmart="True" />
+            <dxg:GridColumn FieldName="LastName" IsSmart="True" />
+            <dxg:GridControl.InputBindings>
+                <KeyBinding Command="{Binding View.Commands.DeleteFocusedRow, ElementName=grid}" Key="Delete" />
+                <KeyBinding Command="{Binding UpdateCommand, ElementName=EditFormBehavior}" Key="F2" />
+                <KeyBinding Command="{Binding CreateCommand, ElementName=EditFormBehavior}" Key="N" Modifiers="Control" />
+            </dxg:GridControl.InputBindings>
+            <dxg:GridControl.TotalSummary>
+                <dxg:GridSummaryItem SummaryType="Count" Alignment="Right" />
+            </dxg:GridControl.TotalSummary>
+            <dxmvvm:Interaction.Behaviors>
+                <dxg:DialogEditFormBehavior x:Name="EditFormBehavior" KeyProperty="Id" CreateEditItemViewModelCommand="{Binding CreateEditEntityViewModelCommand}" ValidateRowCommand="{Binding ValidateRowCommand}" ValidateRowDeletionCommand="{Binding ValidateRowDeletionCommand}">
+                    <dxg:DialogEditFormBehavior.EditTemplate>
+                        <DataTemplate>
+                            <local:UserDetailView />
+                        </DataTemplate>
+                    </dxg:DialogEditFormBehavior.EditTemplate>
+                </dxg:DialogEditFormBehavior>
+            </dxmvvm:Interaction.Behaviors>
+        </dxg:GridControl>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+    </Grid>
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+</Window>
