@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace DetailCollectionEditing {
     public class MainViewModel : ViewModelBase {
-        EntityFrameworkIssues.Issues.IssuesContext _Context;
-        System.Collections.Generic.IList<EntityFrameworkIssues.Issues.User> _ItemsSource;
+        IssuesContext _Context;
+        IList<User> _ItemsSource;
 
-        public System.Collections.Generic.IList<EntityFrameworkIssues.Issues.User> ItemsSource {
+        public IList<User> ItemsSource {
             get {
                 if(_ItemsSource == null && !IsInDesignMode) {
                     _Context = new IssuesContext();
@@ -21,15 +21,8 @@ namespace DetailCollectionEditing {
                 return _ItemsSource;
             }
         }
-        //[Command]
-        //public void ValidateRow(RowValidationArgs args) {
-        //    var item = (User)args.Item;
-        //    if(args.IsNewItem)
-        //        _Context.Users.Add(item);
-        //    _Context.SaveChanges();
-        //}
         [Command]
-        public void CreateEditEntityViewModel(DevExpress.Mvvm.Xpf.CreateEditItemViewModelArgs args) {
+        public void CreateEditEntityViewModel(CreateEditItemViewModelArgs args) {
             var context = new IssuesContext();
             User item;
             if(args.Key != null)
@@ -41,18 +34,18 @@ namespace DetailCollectionEditing {
             args.ViewModel = new EditUserViewModel(item, context, title: (args.IsNewItem ? "New " : "Edit ") + nameof(User));
         }
         [Command]
-        public void ValidateRow(DevExpress.Mvvm.Xpf.EditFormRowValidationArgs args) {
+        public void ValidateRow(EditFormRowValidationArgs args) {
             var context = (IssuesContext)args.EditOperationContext;
             context.SaveChanges();
         }
         [Command]
-        public void ValidateRowDeletion(DevExpress.Mvvm.Xpf.ValidateRowDeletionArgs args) {
+        public void ValidateRowDeletion(ValidateRowDeletionArgs args) {
             var item = (User)args.Items.Single();
             _Context.Users.Remove(item);
             _Context.SaveChanges();
         }
         [Command]
-        public void DataSourceRefresh(DevExpress.Mvvm.Xpf.DataSourceRefreshArgs args) {
+        public void DataSourceRefresh(DataSourceRefreshArgs args) {
             _ItemsSource = null;
             _Context = null;
             RaisePropertyChanged(nameof(ItemsSource));

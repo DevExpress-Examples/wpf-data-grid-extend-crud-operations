@@ -10,7 +10,7 @@ namespace DetailCollectionEditing {
     public class EditUserViewModel : EditItemViewModel {
         public EditUserViewModel(User item, IssuesContext editOperationContext, string title = null)
             : base(item, editOperationContext, title : title) {
-            Issues = item.Issues.ToList() ?? new List<Issue>();
+            Issues = item.Issues?.ToList() ?? new List<Issue>();
         }
         IssuesContext Context => (IssuesContext)EditOperationContext;
         User User => (User)Item;
