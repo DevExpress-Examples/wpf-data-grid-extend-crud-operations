@@ -13,6 +13,7 @@ This repository contains solutions that extend CRUD operations:
 
 * Undo Operation
 * Async CRUD Operations
+* Detail Collection Editing
 
 ## Undo Operation
 
@@ -21,3 +22,7 @@ The solution includes a behavior that allows users to undo the latest operation.
 ## Async CRUD Operations
 
 The solution shows how to implement async CRUD operations.
+
+## Detail Collection Editing
+
+The solution shows how to implement detail collection editing.
