@@ -1,6 +1,7 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.Mvvm.UI.Interactivity;
 using DevExpress.Mvvm.Xpf;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using System;
 using System.Collections;
@@ -22,6 +23,7 @@ namespace UndoOperation {
         Action undoAction;
         bool isNewItemRowEditing;
         object editingCache;
+        IMessageBoxService messageBoxService;
 
         public ICopyOperationSupporter CopyOperationsSupporter {
             get { return (ICopyOperationSupporter)GetValue(CopyOperationsSupporterProperty); }
@@ -31,6 +33,7 @@ namespace UndoOperation {
 
         public UndoCRUDOperationsBehavior() {
             UndoCommand = new DelegateCommand(Undo, CanUndo);
+            messageBoxService = new DXMessageBoxService();
         }
 
         protected override void OnAttached() {
@@ -103,20 +106,56 @@ namespace UndoOperation {
         }
 
         void ApplyEditingCache(object item) {
-            CopyOperationsSupporter.CopyTo(editingCache, item);
-            editingCache = null;
-            AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item));
-            AssociatedObject.ValidateRowCommand?.Execute(new RowValidationArgs(editingCache, Source.IndexOf(item), false, new CancellationToken(), false));
+            try {
+                var args = new RowValidationArgs(editingCache, Source.IndexOf(item), false, new CancellationToken(), false);
+                AssociatedObject.ValidateRowCommand?.Execute(args);
+                if(!Validate(args.Result)) {
+                    return;
+                }
+                CopyOperationsSupporter.CopyTo(editingCache, item);
+                editingCache = null;
+                AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item));
+            } catch(Exception ex) {
+                ShowError(ex.Message);
+            }
         }
 
         void RemoveItem(object item) {
-            Source.Remove(item);
-            AssociatedObject.ValidateRowDeletionCommand?.Execute(new ValidateRowDeletionArgs(new object[] { item }, new int[] { Source.IndexOf(item) }));
+            try {
+                var args = new ValidateRowDeletionArgs(new object[] { item }, new int[] { Source.IndexOf(item) });
+                AssociatedObject.ValidateRowDeletionCommand?.Execute(args);
+                if(!Validate(args.Result)) {
+                    return;
+                }
+                Source.Remove(item);
+            } catch(Exception ex) {
+                ShowError(ex.Message);
+            }
         }
 
         void InsertItem(int position, object item) {
-            Source.Insert(position, item);
-            AssociatedObject.ValidateRowCommand?.Execute(new RowValidationArgs(item, Source.IndexOf(item), true, new CancellationToken(), false));
+            try {
+                var args = new RowValidationArgs(item, Source.IndexOf(item), true, new CancellationToken(), false);
+                AssociatedObject.ValidateRowCommand?.Execute(args);
+                if(!Validate(args.Result)) {
+                    return;
+                }
+                Source.Insert(position, item);
+            } catch(Exception ex) {
+                ShowError(ex.Message);
+            }
+        }
+
+        bool Validate(ValidationErrorInfo validationInfo) {
+            if(validationInfo?.ErrorContent != null) {
+                ShowError(validationInfo.ErrorContent);
+                return false;
+            }
+            return true;
+        }
+
+        void ShowError(string message) {
+            messageBoxService.ShowMessage(message, "Unable to undo the last operation", MessageButton.OK, MessageIcon.Error);
         }
     }
 }
