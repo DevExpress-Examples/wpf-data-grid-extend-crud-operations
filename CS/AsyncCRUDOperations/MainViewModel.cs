@@ -29,8 +29,12 @@ namespace AsyncCRUDOperations {
         [Command]
         public void ValidateRowDeletion(ValidateRowDeletionArgs args) {
             var item = (User)args.Items.Single();
-            _Context.Users.Remove(item);
-            _Context.SaveChanges();
+            args.ResultAsync = Task.Run(async () => {
+                await Task.Delay(3000);
+                _Context.Users.Remove(item);
+                _Context.SaveChanges();
+                return new ValidationErrorInfo(null);
+            });
         }
         [Command]
         public void DataSourceRefresh(DataSourceRefreshArgs args) {
