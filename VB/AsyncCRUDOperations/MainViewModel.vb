@@ -39,8 +39,12 @@ Namespace AsyncCRUDOperations
         <Command>
         Public Sub ValidateRowDeletion(ByVal args As ValidateRowDeletionArgs)
             Dim item = CType(args.Items.[Single](), User)
-            _Context.Users.Remove(item)
-            _Context.SaveChanges()
+            args.ResultAsync = Task.Run(Async Function()
+                Await Task.Delay(3000)
+                _Context.Users.Remove(item)
+                _Context.SaveChanges()
+                Return New ValidationErrorInfo(Nothing)
+            End Function)
         End Sub
 
         <Command>
