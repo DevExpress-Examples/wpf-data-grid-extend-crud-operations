@@ -1,13 +1,14 @@
 Imports DevExpress.Mvvm
 Imports DevExpress.Mvvm.UI.Interactivity
 Imports DevExpress.Mvvm.Xpf
+Imports DevExpress.Xpf.Core
 Imports DevExpress.Xpf.Grid
 Imports System
 Imports System.Collections
+Imports System.Linq
 Imports System.Threading
 Imports System.Windows
 Imports System.Windows.Input
-Imports System.Linq
 
 Namespace UndoOperation
 
@@ -34,6 +35,8 @@ Namespace UndoOperation
 
         Private editingCache As Object
 
+        Private messageBoxService As IMessageBoxService
+
         Public Property CopyOperationsSupporter As ICopyOperationSupporter
             Get
                 Return CType(GetValue(CopyOperationsSupporterProperty), ICopyOperationSupporter)
@@ -56,6 +59,7 @@ Namespace UndoOperation
 
         Public Sub New()
             UndoCommand = New DelegateCommand(AddressOf Undo, AddressOf CanUndo)
+            messageBoxService = New DXMessageBoxService()
         End Sub
 
         Protected Overrides Sub OnAttached()
@@ -114,13 +118,13 @@ Namespace UndoOperation
         End Sub
 
         Private Sub OnEditingStarted(ByVal sender As Object, ByVal e As RowEditStartedEventArgs)
-            If Not Integer.Equals(e.RowHandle, DataControlBase.NewItemRowHandle) Then
+            If e.RowHandle <> DataControlBase.NewItemRowHandle Then
                 editingCache = CopyOperationsSupporter.Clone(e.Row)
             End If
         End Sub
 
         Private Sub OnRowDeleted(ByVal sender As Object, ByVal e As GridValidateRowDeletionEventArgs)
-            undoAction = New Action(Sub() UndoDeleteAction(e.RowHandles.Single(), CopyOperationsSupporter.Clone(e.Rows.Single())))
+            undoAction = New Action(Sub() UndoDeleteAction(e.RowHandles.[Single](), CopyOperationsSupporter.Clone(e.Rows.[Single]())))
         End Sub
 
         Private Sub OnRowAddedOrEdited(ByVal sender As Object, ByVal e As GridRowValidationEventArgs)
@@ -131,20 +135,60 @@ Namespace UndoOperation
         End Sub
 
         Private Sub ApplyEditingCache(ByVal item As Object)
-            CopyOperationsSupporter.CopyTo(editingCache, item)
-            editingCache = Nothing
-            AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item))
-            AssociatedObject.ValidateRowCommand?.Execute(New RowValidationArgs(editingCache, Source.IndexOf(item), False, New CancellationToken(), False))
+            Try
+                Dim args = New RowValidationArgs(editingCache, Source.IndexOf(item), False, New CancellationToken(), False)
+                AssociatedObject.ValidateRowCommand?.Execute(args)
+                If Not Validate(args.Result) Then
+                    Return
+                End If
+
+                CopyOperationsSupporter.CopyTo(editingCache, item)
+                editingCache = Nothing
+                AssociatedObject.DataControl.RefreshRow(AssociatedObject.DataControl.FindRow(item))
+            Catch ex As Exception
+                ShowError(ex.Message)
+            End Try
         End Sub
 
         Private Sub RemoveItem(ByVal item As Object)
-            Source.Remove(item)
-            AssociatedObject.ValidateRowDeletionCommand?.Execute(New ValidateRowDeletionArgs(New Object() {item}, New Integer() {Source.IndexOf(item)}))
+            Try
+                Dim args = New ValidateRowDeletionArgs(New Object() {item}, New Integer() {Source.IndexOf(item)})
+                AssociatedObject.ValidateRowDeletionCommand?.Execute(args)
+                If Not Validate(args.Result) Then
+                    Return
+                End If
+
+                Source.Remove(item)
+            Catch ex As Exception
+                ShowError(ex.Message)
+            End Try
         End Sub
 
         Private Sub InsertItem(ByVal position As Integer, ByVal item As Object)
-            Source.Insert(position, item)
-            AssociatedObject.ValidateRowCommand?.Execute(New RowValidationArgs(item, Source.IndexOf(item), True, New CancellationToken(), False))
+            Try
+                Dim args = New RowValidationArgs(item, Source.IndexOf(item), True, New CancellationToken(), False)
+                AssociatedObject.ValidateRowCommand?.Execute(args)
+                If Not Validate(args.Result) Then
+                    Return
+                End If
+
+                Source.Insert(position, item)
+            Catch ex As Exception
+                ShowError(ex.Message)
+            End Try
+        End Sub
+
+        Private Function Validate(ByVal validationInfo As ValidationErrorInfo) As Boolean
+            If Not Equals(validationInfo?.ErrorContent, Nothing) Then
+                ShowError(validationInfo.ErrorContent)
+                Return False
+            End If
+
+            Return True
+        End Function
+
+        Private Sub ShowError(ByVal message As String)
+            messageBoxService.ShowMessage(message, "Unable to undo the last operation", MessageButton.OK, MessageIcon.Error)
         End Sub
     End Class
 End Namespace

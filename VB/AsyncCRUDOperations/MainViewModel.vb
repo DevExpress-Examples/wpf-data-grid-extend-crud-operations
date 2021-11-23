@@ -38,7 +38,6 @@ Namespace AsyncCRUDOperations
 
         <Command>
         Public Sub ValidateRowDeletion(ByVal args As ValidateRowDeletionArgs)
-            Call Task.Delay(3000).Wait()
             Dim item = CType(args.Items.[Single](), User)
             _Context.Users.Remove(item)
             _Context.SaveChanges()
@@ -50,7 +49,7 @@ Namespace AsyncCRUDOperations
         End Sub
 
         Private Async Function RefreshDataSoruceAsync() As Task
-            Await Task.Delay(3000)
+            Await Task.Delay(3000).ConfigureAwait(False)
             _Context = New IssuesContext()
             _ItemsSource = _Context.Users.ToList()
             RaisePropertyChanged(NameOf(MainViewModel.ItemsSource))
