@@ -26,7 +26,7 @@ The solution uses a behavior that allows users to undo the latest operation (cre
                 <!-- ... -->
                 <dxmvvm:Interaction.Behaviors>
                     <local:UndoCRUDOperationsBehavior x:Name="undoBehavior" 
-                                                      CopyOperationsSupporter="{Binding CopyOperationsSupporter}" />
+                        CopyOperationsSupporter="{Binding CopyOperationsSupporter}" />
                 </dxmvvm:Interaction.Behaviors>
             </dxg:TableView>
         </dxg:GridControl.View>
