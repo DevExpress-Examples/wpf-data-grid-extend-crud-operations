@@ -19,7 +19,7 @@ The solution uses a behavior that allows users to undo the latest operation (cre
 1. Assign the behavior to the Data Grid's view.
 2. Create a class that implements **ICopyOperationsSupporter**. The class instance allows the behavior to copy data item properties and apply them when users execute the undo operation.
 
-    ```xml
+    ```xaml
     <dxg:GridControl x:Name="grid" ItemsSource="{Binding ItemsSource}">
         <dxg:GridControl.View>
             <dxg:TableView>
@@ -54,7 +54,7 @@ The solution shows how to implement async CRUD operations:
 
 Note that you also need to load initial data asynchronously. Use the [EventToCommand](https://docs.devexpress.com/WPF/DevExpress.Mvvm.UI.EventToCommand) behavior to execute the [RefreshDataSource](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DataViewCommandsBase.RefreshDataSource) command in response to the **Loaded** event:
 
-```xml
+```xaml
 <dxg:GridControl ItemsSource="{Binding ItemsSource}">
     <dxmvvm:Interaction.Behaviors>
         <dxmvvm:EventToCommand Event="Loaded" 
