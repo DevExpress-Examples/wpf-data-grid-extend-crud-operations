@@ -9,9 +9,10 @@ After you bind the Data Grid to a database, you can implement CRUD operations (c
 
 This repository contains solutions that extend CRUD operations:
 
-* Undo Operations
-* Async CRUD Operations
-* Detail Collection Editing
+* [Undo Operations](#undo-operations)
+* [Async CRUD Operations](#async-crud-operations)
+* [Detail Collection Editing](#detail-collection-editing)
+
 
 ## Undo Operations
 
@@ -34,6 +35,13 @@ The solution uses a behavior that allows users to undo the latest operation (cre
     </dxg:GridControl>
     ```
 
+    ```cs
+    public interface ICopyOperationSupporter {
+        object Clone(object item);
+        void CopyTo(object source, object target);
+    }
+    ```
+
 3. Allow users to call the behavior's **UndoCommand**.
 
     ```xml
@@ -44,6 +52,7 @@ The solution uses a behavior that allows users to undo the latest operation (cre
 
 * [MainWindow.xaml](./CS/Undo/MainWindow.xaml)
 * [MainViewModel.cs](./CS/Undo/MainViewModel.cs)
+* [UserCopyOperationSupporter.cs](./CS/Undo/UserCopyOperationSupporter.cs)
 
 
 ## Async CRUD Operations
@@ -52,6 +61,10 @@ The solution shows how to implement async CRUD operations:
 
 1. Create tasks that allow the Data Grid to work with the database asynchronously.
 2. Assign these tasks to the [DataSourceRefreshArgs.RefreshAsync](https://docs.devexpress.com/CoreLibraries/DevExpress.Mvvm.Xpf.DataSourceRefreshArgs.RefreshAsync), [ValidationArgs.ResultAsync](https://docs.devexpress.com/CoreLibraries/DevExpress.Mvvm.Xpf.ValidationArgs.ResultAsync), [DeleteValidationArgs.ResultAsync](https://docs.devexpress.com/CoreLibraries/DevExpress.Mvvm.Xpf.DeleteValidationArgs.ResultAsync) properties.
+
+```cs
+args.ResultAsync = Task.Run(async () => { await DoSomethingAsync(); });
+```
 
 Note that you also need to load initial data asynchronously. Use the [EventToCommand](https://docs.devexpress.com/WPF/DevExpress.Mvvm.UI.EventToCommand) behavior to execute the [RefreshDataSource](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DataViewCommandsBase.RefreshDataSource) command in response to the **Loaded** event:
 
@@ -74,7 +87,7 @@ Note that you also need to load initial data asynchronously. Use the [EventToCom
 
 ## Detail Collection Editing
 
-The solution uses the [DialogEditFormBehavior](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior) with a custom [EditTemplate](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior.EditTemplate) to allow users to edit detail data for each row in the Data Grid.
+The solution shows the Data Grid where each data item has a relative data table. The [DialogEditFormBehavior](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior) with a custom [EditTemplate](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior.EditTemplate) allows users to edit detail data for each row in the Data Grid.
 
 ![](./CS/DetailCollectionEditing/detail-collection-editing.png)
 
