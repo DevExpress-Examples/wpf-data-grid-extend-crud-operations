@@ -11,6 +11,7 @@ This repository contains solutions that extend CRUD operations:
 
 * Undo Operations
 * Async CRUD Operations
+* Detail Collection Editing
 
 ## Undo Operations
 
@@ -39,11 +40,11 @@ The solution uses a behavior that allows users to undo the latest operation (cre
     <dxb:BarButtonItem Content="Undo (Ctrl+Z)" Command="{Binding UndoCommand, ElementName=undoBehavior}"/>
     ```
 
-
 ### Files to Look At
 
 * [MainWindow.xaml](./CS/Undo/MainWindow.xaml)
 * [MainViewModel.cs](./CS/Undo/MainViewModel.cs)
+
 
 ## Async CRUD Operations
 
@@ -69,6 +70,19 @@ Note that you also need to load initial data asynchronously. Use the [EventToCom
 
 * [MainWindow.xaml](./CS/AsyncCRUDOperations/MainWindow.xaml)
 * [MainViewModel.cs](./CS/AsyncCRUDOperations/MainViewModel.cs)
+
+
+## Detail Collection Editing
+
+The solution uses the [DialogEditFormBehavior](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior) with a custom [EditTemplate](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior.EditTemplate) to allow users to edit detail data for each row in the Data Grid.
+
+![](./CS/DetailCollectionEditing/detail-collection-editing.png)
+
+### Files to Look At
+
+* [MainWindow.xaml](./CS/DetailCollectionEditing/MainWindow.xaml)
+* [MainViewModel.cs](./CS/DetailCollectionEditing/MainViewModel.cs)
+
 
 ## Documentation
 
