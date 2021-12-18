@@ -1,6 +1,7 @@
 Imports DevExpress.Mvvm
 Imports EntityFrameworkIssues.Issues
 Imports System.Collections.ObjectModel
+Imports System.Linq
 
 Namespace UndoOperation
 
@@ -34,22 +35,22 @@ Namespace UndoOperation
             End Set
         End Property
 
-        <DevExpress.Mvvm.DataAnnotations.Command>
-        Public Sub ValidateRow(ByVal args As DevExpress.Mvvm.Xpf.RowValidationArgs)
+        <DataAnnotations.Command>
+        Public Sub ValidateRow(ByVal args As Xpf.RowValidationArgs)
             Dim item = CType(args.Item, User)
             If args.IsNewItem Then _Context.Users.Add(item)
             _Context.SaveChanges()
         End Sub
 
-        <DevExpress.Mvvm.DataAnnotations.Command>
-        Public Sub ValidateRowDeletion(ByVal args As DevExpress.Mvvm.Xpf.ValidateRowDeletionArgs)
+        <DataAnnotations.Command>
+        Public Sub ValidateRowDeletion(ByVal args As Xpf.ValidateRowDeletionArgs)
             Dim item = CType(args.Items.[Single](), User)
             _Context.Users.Remove(item)
             _Context.SaveChanges()
         End Sub
 
-        <DevExpress.Mvvm.DataAnnotations.Command>
-        Public Sub DataSourceRefresh(ByVal args As DevExpress.Mvvm.Xpf.DataSourceRefreshArgs)
+        <DataAnnotations.Command>
+        Public Sub DataSourceRefresh(ByVal args As Xpf.DataSourceRefreshArgs)
             _ItemsSource = Nothing
             _Context = Nothing
             RaisePropertyChanged(NameOf(MainViewModel.ItemsSource))
