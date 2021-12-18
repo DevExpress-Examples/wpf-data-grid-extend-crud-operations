@@ -13,11 +13,11 @@ This repository contains solutions that extend CRUD operations:
 * [Detail Collection Editing](#detail-collection-editing)
 
 
-## Undo Operations
+## Solution 1 - Undo Operations
 
-The solution uses a behavior that allows users to undo the latest operation (create, update, or delete).
+This solution uses the **UndoCRUDOperationsBehavior** that allows users to undo the latest operation (create, update, or delete).
 
-1. Assign the behavior to the Data Grid's view.
+1. Assign this behavior to the Data Grid's view.
 2. Create a class that implements **ICopyOperationsSupporter**. The class instance allows the behavior to copy data item properties and apply them when users execute the undo operation.
 
     ```xaml
@@ -54,9 +54,9 @@ The solution uses a behavior that allows users to undo the latest operation (cre
 * [UserCopyOperationSupporter.cs](./CS/Undo/UserCopyOperationSupporter.cs)
 
 
-## Async CRUD Operations
+## Solution 2 - Async CRUD Operations
 
-The solution shows how to implement async CRUD operations:
+This solution shows how to implement async CRUD operations:
 
 1. Create tasks that allow the Data Grid to work with the database asynchronously.
 2. Assign these tasks to the [DataSourceRefreshArgs.RefreshAsync](https://docs.devexpress.com/CoreLibraries/DevExpress.Mvvm.Xpf.DataSourceRefreshArgs.RefreshAsync), [ValidationArgs.ResultAsync](https://docs.devexpress.com/CoreLibraries/DevExpress.Mvvm.Xpf.ValidationArgs.ResultAsync), [DeleteValidationArgs.ResultAsync](https://docs.devexpress.com/CoreLibraries/DevExpress.Mvvm.Xpf.DeleteValidationArgs.ResultAsync) properties.
@@ -84,9 +84,9 @@ Note that you also need to load initial data asynchronously. Use the [EventToCom
 * [MainViewModel.cs](./CS/AsyncCRUDOperations/MainViewModel.cs)
 
 
-## Detail Collection Editing
+## Solution 3 - Detail Collection Editing
 
-The solution shows the Data Grid where each data item has a relative data table. The [DialogEditFormBehavior](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior) with a custom [EditTemplate](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior.EditTemplate) allows users to edit detail data for each row in the Data Grid.
+The solution uses the [DialogEditFormBehavior](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior) with a custom [EditTemplate](https://docs.devexpress.com/WPF/DevExpress.Xpf.Grid.DialogEditFormBehavior.EditTemplate) that allows users to edit detail data for each row in the Data Grid.
 
 ![](./CS/DetailCollectionEditing/detail-collection-editing.png)
 
