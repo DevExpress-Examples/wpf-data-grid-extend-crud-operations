@@ -93,7 +93,7 @@ The solution uses the [DialogEditFormBehavior](https://docs.devexpress.com/WPF/D
 ### Files to Look At
 
 * [MainWindow.xaml](./CS/DetailCollectionEditing/MainWindow.xaml)
-* [MainViewModel.cs](./CS/DetailCollectionEditing/MainViewModel.cs)
+* [MainViewModel.cs](./CS/DetailCollectionEditing/ViewModels/MainViewModel.cs)
 
 
 ## Documentation
