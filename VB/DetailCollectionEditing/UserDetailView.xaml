@@ -1,0 +1,43 @@
+<UserControl x:Class="DetailCollectionEditing.UserDetailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:local="clr-namespace:DetailCollectionEditing"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             mc:Ignorable="d" 
+             Height="600" Width="800">
+    <Grid>
+        <dxlc:LayoutControl x:Name="layoutControl" Orientation="Vertical">
+            <dxlc:DataLayoutItem Binding="{Binding Item.FirstName}"/>
+            <dxlc:DataLayoutItem Binding="{Binding Item.LastName}"/>
+            <dxlc:LayoutGroup Header="Issues" GroupBoxDisplayMode="Light" View="GroupBox" Orientation="Vertical">
+                <dxb:ToolBarControl>
+                    <dxb:BarButtonItem Content="Edit (F2)" Command="{Binding View.Commands.EditFocusedRow, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Edit.svg}" BarItemDisplayMode="ContentAndGlyph" />
+                    <dxb:BarButtonItem Content="New" Command="{Binding View.Commands.AddNewRow, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Add.svg}" BarItemDisplayMode="ContentAndGlyph" />
+                    <dxb:BarButtonItem Content="Delete (Del)" Command="{Binding View.Commands.DeleteFocusedRow, ElementName=grid}" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Delete.svg}" BarItemDisplayMode="ContentAndGlyph" />
+                </dxb:ToolBarControl>
+                <dxg:GridControl x:Name="grid" ItemsSource="{Binding Issues}" Grid.Row="1">
+                    <dxg:GridControl.View>
+                        <dxg:TableView NewItemRowPosition="Top" ShowUpdateRowButtons="OnCellEditorOpen" ShowFixedTotalSummary="True" ValidateRowCommand="{Binding ValidateRowCommand}" ValidateRowDeletionCommand="{Binding ValidateRowDeletionCommand}"/>
+                    </dxg:GridControl.View>
+                    <dxg:GridColumn FieldName="Subject" IsSmart="True" />
+                    <dxg:GridColumn FieldName="Created" IsSmart="True" SortOrder="Descending"/>
+                    <dxg:GridColumn FieldName="Votes" IsSmart="True" />
+                    <dxg:GridColumn FieldName="Priority" IsSmart="True" />
+                    <dxg:GridControl.TotalSummary>
+                        <dxg:GridSummaryItem SummaryType="Count" Alignment="Right" />
+                    </dxg:GridControl.TotalSummary>
+                    <dxg:GridControl.InputBindings>
+                        <KeyBinding Command="{Binding View.Commands.DeleteFocusedRow, ElementName=grid}" Key="Delete" />
+                    </dxg:GridControl.InputBindings>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </Grid>
+</UserControl>
