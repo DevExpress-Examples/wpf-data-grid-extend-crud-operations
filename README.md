@@ -9,9 +9,9 @@ After you bind the Data Grid to a database, you can implement CRUD operations (c
 
 This repository contains solutions that extend CRUD operations:
 
-* [Undo Operations](#undo-operations)
-* [Async CRUD Operations](#async-crud-operations)
-* [Detail Collection Editing](#detail-collection-editing)
+* [Undo Operations](#solution-1---undo-operations)
+* [Async CRUD Operations](#solution-2---async-crud-operations)
+* [Detail Collection Editing](#solution-3---detail-collection-editing)
 
 
 ## Solution 1 - Undo Operations
